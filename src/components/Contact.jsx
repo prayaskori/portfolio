@@ -1,65 +1,93 @@
-import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, Github, Linkedin, FileText } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
 
 export default function Contact() {
+  const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    });
+    const elements = sectionRef.current?.querySelectorAll('.fade-in');
+    elements?.forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    const formData = new FormData(e.target);
+
+    try {
+      const response = await fetch(e.target.action, {
+        method: 'POST',
+        body: formData,
+        headers: { 'Accept': 'application/json' }
+      });
+      if (response.ok) {
+        setSubmitted(true);
+      } else {
+        alert('Oops! There was a problem submitting your form.');
+      }
+    } catch {
+      alert('Oops! There was a problem submitting your form.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
-    <section id="contact" className="section" style={{ paddingBottom: '6rem' }}>
-      <div className="container">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="glass-panel"
-          style={{ padding: '4rem 2rem', textAlign: 'center', background: 'linear-gradient(135deg, rgba(255,255,255,0.05), rgba(168, 85, 247, 0.05))' }}
-        >
-          <h2 style={{ fontSize: '3rem', marginBottom: '1rem', color: '#fff' }}>Get In Touch</h2>
-          <p style={{ fontSize: '1.25rem', color: 'var(--text-secondary)', marginBottom: '3rem', maxWidth: '600px', margin: '0 auto 3rem auto' }}>
-            Let's work together on something amazing! I'm currently open to new opportunities and collaborations.
-          </p>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', alignItems: 'center', marginBottom: '3rem' }}>
-            <a href="mailto:prayask007@gmail.com" style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '1.125rem', color: '#fff' }}>
-              <div style={{ padding: '0.75rem', background: 'rgba(56, 189, 248, 0.1)', borderRadius: '50%', color: 'var(--accent-blue)' }}>
-                <Mail size={24} />
-              </div>
-              prayask007@gmail.com
-            </a>
-            
-            <a href="tel:+917223980774" style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '1.125rem', color: '#fff' }}>
-              <div style={{ padding: '0.75rem', background: 'rgba(168, 85, 247, 0.1)', borderRadius: '50%', color: 'var(--accent-purple)' }}>
-                <Phone size={24} />
-              </div>
-              +91 7223980774
-            </a>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '1.125rem', color: '#fff' }}>
-              <div style={{ padding: '0.75rem', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '50%', color: '#f8fafc' }}>
-                <MapPin size={24} />
-              </div>
-              Jabalpur, Madhya Pradesh
-            </div>
+    <section id="contact" className="section" ref={sectionRef}>
+      <h2 className="section-title fade-in"><span>Get In Touch</span></h2>
+      <div className="contact-container fade-in">
+        {!submitted ? (
+          <form
+            className="contact-form"
+            action="https://formsubmit.co/prayask007@gmail.com"
+            method="POST"
+            onSubmit={handleSubmit}
+          >
+            <input type="hidden" name="_captcha" value="false" />
+            <input type="text" name="_honey" style={{ display: 'none' }} />
+            <input type="hidden" name="_subject" value="New message from Portfolio!" />
+            <input type="text" name="name" placeholder="Your Name" required />
+            <input type="email" name="email" placeholder="Your Email" required />
+            <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
+            <button type="submit" className="btn-primary" disabled={submitting} style={{ width: '100%', textAlign: 'center' }}>
+              {submitting ? 'Sending...' : 'Send Message'}
+            </button>
+          </form>
+        ) : (
+          <div className="success-popup active">
+            <i className="fas fa-check-circle"></i>
+            <h3>Thank You!</h3>
+            <p>Your message has been sent successfully. I'll get back to you soon.</p>
           </div>
+        )}
 
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
-            <a href="https://github.com/prayaskori" target="_blank" rel="noopener noreferrer" className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.5rem', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', borderRadius: '8px', fontWeight: 600, transition: 'background 0.2s' }}>
-              <Github size={20} />
-              GitHub
-            </a>
-            <a href="https://www.linkedin.com/in/prayas-kori-068166395" target="_blank" rel="noopener noreferrer" className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.5rem', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', borderRadius: '8px', fontWeight: 600, transition: 'background 0.2s' }}>
-              <Linkedin size={20} />
-              LinkedIn
-            </a>
-            <a href="/resume.pdf" target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.5rem', background: 'var(--accent-blue)', color: '#000', borderRadius: '8px', fontWeight: 600, transition: 'transform 0.2s' }}>
-              <FileText size={20} />
-              View Resume
-            </a>
-          </div>
-        </motion.div>
+        <div className="social-links">
+          <a href="mailto:prayask007@gmail.com" title="Email">
+            <i className="fas fa-envelope"></i>
+          </a>
+          <a href="tel:+917223980774" title="Phone">
+            <i className="fas fa-phone"></i>
+          </a>
+          <a href="https://github.com/prayaskori" target="_blank" rel="noopener noreferrer" title="GitHub">
+            <i className="fab fa-github"></i>
+          </a>
+          <a href="https://www.linkedin.com/in/prayas-kori-068166395" target="_blank" rel="noopener noreferrer" title="LinkedIn">
+            <i className="fab fa-linkedin"></i>
+          </a>
+        </div>
       </div>
 
-      <footer style={{ textAlign: 'center', marginTop: '6rem', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-        <p>© {new Date().getFullYear()} Prayas Kori. Designed & Built with React & Three.js.</p>
+      <footer>
+        <p>© {new Date().getFullYear()} Prayas Kori. Designed for the future of AI.</p>
       </footer>
     </section>
   );

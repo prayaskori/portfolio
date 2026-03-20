@@ -1,123 +1,124 @@
-import { motion } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
 
 export default function About() {
+  const [activeTab, setActiveTab] = useState('story');
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    });
+    const elements = sectionRef.current?.querySelectorAll('.fade-in');
+    elements?.forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section className="section" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', paddingTop: '8rem' }}>
-      <div className="container" style={{ position: 'relative', zIndex: 10 }}>
-        
-        {/* Hero Copy */}
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          style={{ maxWidth: '800px', marginBottom: '4rem' }}
-        >
-          <h1 style={{ fontSize: 'clamp(3rem, 6vw, 5rem)', marginBottom: '1rem', background: 'linear-gradient(135deg, #fff, #94a3b8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-            Prayas Kori
-          </h1>
-          <h2 className="gradient-text" style={{ fontSize: '1.5rem', marginBottom: '1.5rem', fontWeight: 600 }}>
-            Software Developer & AI Engineer
-          </h2>
-          <p style={{ fontSize: '1.125rem', color: 'var(--text-secondary)', lineHeight: 1.8, marginBottom: '2rem' }}>
-            I build scalable web applications and love solving real-world problems. As a fresh AI Engineer and Software Developer, I leverage machine learning and modern web technologies to create intelligent solutions. Passionate about building end-to-end products that combine AI-driven insights with seamless user experiences. Constantly learning and exploring new technologies to stay at the cutting edge of innovation.
-          </p>
-          
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <a href="mailto:prayask007@gmail.com" className="btn-primary" style={{ padding: '0.75rem 1.5rem', background: 'var(--accent-blue)', color: '#000', borderRadius: '8px', fontWeight: 600, transition: 'transform 0.2s', display: 'inline-block' }}>
-              Email Me
-            </a>
-            <a href="#projects" className="btn-secondary" style={{ padding: '0.75rem 1.5rem', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', borderRadius: '8px', fontWeight: 600, backdropFilter: 'blur(5px)', transition: 'background 0.2s', display: 'inline-block' }}>
-              View Projects
-            </a>
+    <section id="about" className="section" ref={sectionRef}>
+      <h2 className="section-title fade-in"><span>About Me</span></h2>
+      <div className="about-wrapper fade-in">
+        <div className="about-profile">
+          <div className="stat-card">
+            <i className="fas fa-code"></i>
+            <h4>Software Developer</h4>
+            <p style={{ color: 'var(--text-gray)', fontSize: '0.85rem' }}>Building with React & Python</p>
           </div>
-        </motion.div>
+          <div className="stat-card">
+            <i className="fas fa-graduation-cap"></i>
+            <h4>2025 Graduate</h4>
+            <p style={{ color: 'var(--text-gray)', fontSize: '0.85rem' }}>JEC, Mechatronics</p>
+          </div>
+          <div className="stat-card">
+            <i className="fas fa-rocket"></i>
+            <h4>AI Enthusiast</h4>
+            <p style={{ color: 'var(--text-gray)', fontSize: '0.85rem' }}>Ready to deploy</p>
+          </div>
+        </div>
 
-        {/* Skills Section */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="glass-panel"
-          style={{ padding: '2rem', marginTop: '2rem' }}
-        >
-          <h3 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', color: '#fff' }}>Skills & Expertise</h3>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2rem' }}>
-            <div>
-              <h4 style={{ color: 'var(--accent-purple)', marginBottom: '0.75rem' }}>Programming Languages</h4>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                {['Python', 'TypeScript', 'JavaScript', 'SQL', 'Bash'].map(skill => (
-                  <span key={skill} style={{ fontSize: '0.85rem', padding: '0.25rem 0.75rem', background: 'rgba(255,255,255,0.05)', borderRadius: '999px', color: 'var(--text-secondary)', border: '1px solid var(--glass-border)' }}>{skill}</span>
-                ))}
-              </div>
-            </div>
-            
-            <div>
-              <h4 style={{ color: 'var(--accent-blue)', marginBottom: '0.75rem' }}>AI & Machine Learning</h4>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                {['Machine Learning', 'Deep Learning', 'Neural Networks', 'CNNs', 'Transfer Learning', 'Feature Engineering', 'Model Evaluation', 'Recommendation Systems', 'LLM Integration', 'Embeddings', 'Semantic Search', 'Vector Databases', 'NumPy', 'Pandas', 'Scikit-learn', 'TensorFlow', 'Keras', 'PyTorch', 'Streamlit'].map(skill => (
-                  <span key={skill} style={{ fontSize: '0.85rem', padding: '0.25rem 0.75rem', background: 'rgba(56, 189, 248, 0.1)', borderRadius: '999px', color: 'var(--accent-blue)', border: '1px solid rgba(56, 189, 248, 0.2)' }}>{skill}</span>
-                ))}
-              </div>
-            </div>
+        <div className="about-content-box">
+          <div className="tab-header">
+            <button
+              className={`tab-btn ${activeTab === 'story' ? 'active' : ''}`}
+              onClick={() => setActiveTab('story')}
+            >
+              My Story
+            </button>
+            <button
+              className={`tab-btn ${activeTab === 'education' ? 'active' : ''}`}
+              onClick={() => setActiveTab('education')}
+            >
+              Education
+            </button>
+            <button
+              className={`tab-btn ${activeTab === 'vision' ? 'active' : ''}`}
+              onClick={() => setActiveTab('vision')}
+            >
+              Vision
+            </button>
+          </div>
 
-            <div>
-              <h4 style={{ color: 'var(--accent-purple)', marginBottom: '0.75rem' }}>Web Development</h4>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                {['React', 'Next.js', 'Tailwind CSS', 'Node.js', 'REST APIs', 'FastAPI', 'Flask', 'Supabase', 'OAuth2', 'JWT Authentication'].map(skill => (
-                  <span key={skill} style={{ fontSize: '0.85rem', padding: '0.25rem 0.75rem', background: 'rgba(168, 85, 247, 0.1)', borderRadius: '999px', color: '#d8b4fe', border: '1px solid rgba(168, 85, 247, 0.2)' }}>{skill}</span>
-                ))}
-              </div>
-            </div>
+          <div className={`tab-body ${activeTab === 'story' ? 'active-tab' : ''}`}>
+            <h3 style={{ marginBottom: '0.5rem' }}>The Builder:</h3>
+            <p style={{ color: 'var(--text-gray)', marginBottom: '1rem' }}>
+              I'm a passionate Software Developer and AI Engineer who loves turning complex problems into elegant solutions.
+              With a strong foundation in full-stack web development and machine learning, I build end-to-end products that
+              combine AI-driven insights with seamless user experiences.
+            </p>
+            <h3 style={{ marginBottom: '0.5rem' }}>The Innovator:</h3>
+            <p style={{ color: 'var(--text-gray)' }}>
+              From building production-ready web applications with Google OAuth and real-time synchronization to developing
+              ML models with 91% accuracy, I constantly push the boundaries of what's possible. I'm driven by the challenge
+              of creating intelligent, scalable software solutions.
+            </p>
+          </div>
 
-            <div>
-              <h4 style={{ color: 'var(--accent-blue)', marginBottom: '0.75rem' }}>Databases & Cloud</h4>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                 {['PostgreSQL', 'MySQL', 'MongoDB', 'AWS (EC2, S3, IAM, Lambda)', 'Docker'].map(skill => (
-                  <span key={skill} style={{ fontSize: '0.85rem', padding: '0.25rem 0.75rem', background: 'rgba(255,255,255,0.05)', borderRadius: '999px', color: 'var(--text-secondary)', border: '1px solid var(--glass-border)' }}>{skill}</span>
-                ))}
-              </div>
+          <div className={`tab-body ${activeTab === 'education' ? 'active-tab' : ''}`}>
+            <div className="timeline-item">
+              <span className="year">2021 – 2025</span>
+              <h4>B.Tech in Mechatronics</h4>
+              <p style={{ color: 'var(--text-gray)' }}>Jabalpur Engineering College (JEC)</p>
             </div>
-
-            <div style={{ gridColumn: '1 / -1' }}>
-              <h4 style={{ color: 'var(--accent-purple)', marginBottom: '0.75rem' }}>Tools & CS Core</h4>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                {['Git', 'Jupyter', 'Software Testing', 'Test Case Design', 'Manual Testing', 'API Testing', 'Functional Testing', 'Bug Tracking', 'Statistics', 'Data Structures & Algorithms', 'Object-Oriented Programming', 'System Design'].map(skill => (
-                  <span key={skill} style={{ fontSize: '0.85rem', padding: '0.25rem 0.75rem', background: 'rgba(255,255,255,0.05)', borderRadius: '999px', color: 'var(--text-secondary)', border: '1px solid var(--glass-border)' }}>{skill}</span>
-                ))}
-              </div>
+            <div className="timeline-item">
+              <span className="year">2020 – 2021</span>
+              <h4>Senior Secondary (CBSE) - Class XII</h4>
+              <p style={{ color: 'var(--text-gray)' }}>St. Gabriel's Senior Secondary School</p>
+            </div>
+            <div className="timeline-item">
+              <span className="year">2018 – 2019</span>
+              <h4>Secondary (CBSE) - Class X</h4>
+              <p style={{ color: 'var(--text-gray)' }}>St. Gabriel's Senior Secondary School</p>
             </div>
           </div>
-        </motion.div>
 
-        {/* Education Section */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          style={{ marginTop: '4rem' }}
-        >
-          <h3 style={{ fontSize: '2rem', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            Education & Certifications
-          </h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <div className="glass-panel" style={{ padding: '1.5rem' }}>
-              <h4 style={{ fontSize: '1.25rem', color: '#fff' }}>Bachelor of Technology in Mechatronics</h4>
-              <p style={{ color: 'var(--accent-blue)', marginBottom: '0.5rem' }}>Jabalpur Engineering College (2021 – 2025)</p>
-            </div>
-            <div className="glass-panel" style={{ padding: '1.5rem' }}>
-              <h4 style={{ fontSize: '1.25rem', color: '#fff' }}>Senior Secondary (CBSE) - Class XII</h4>
-              <p style={{ color: 'var(--accent-blue)', marginBottom: '0.5rem' }}>St. Gabriel's Senior Secondary School (2020-2021)</p>
-            </div>
-            <div className="glass-panel" style={{ padding: '1.5rem' }}>
-              <h4 style={{ fontSize: '1.25rem', color: '#fff' }}>Secondary (CBSE) - Class X</h4>
-              <p style={{ color: 'var(--accent-blue)', marginBottom: '0.5rem' }}>St. Gabriel's Senior Secondary School (2018-2019)</p>
-            </div>
+          <div className={`tab-body ${activeTab === 'vision' ? 'active-tab' : ''}`}>
+            <h3 style={{ marginBottom: '1rem' }}>My Goal</h3>
+            <p style={{ color: 'var(--text-gray)', marginBottom: '1rem' }}>
+              To build intelligent, scalable applications that solve real-world challenges.
+            </p>
+            <ul className="vision-list">
+              <li>
+                <i className="fas fa-check-circle"></i>
+                Master Cloud Architecture (AWS/Azure)
+              </li>
+              <li>
+                <i className="fas fa-check-circle"></i>
+                Contribute to Open Source AI Projects
+              </li>
+              <li>
+                <i className="fas fa-check-circle"></i>
+                Build scalable AI-driven applications
+              </li>
+              <li>
+                <i className="fas fa-check-circle"></i>
+                Excel in Full-Stack Web Development
+              </li>
+            </ul>
           </div>
-        </motion.div>
-        
+        </div>
       </div>
     </section>
   );
